@@ -49,7 +49,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         slide.setMaximum(100);
         slide.setValue(5);
         slide.addChangeListener(new SlideListener());
-        toolBar.setPreferredSize(new Dimension(500, 50));
+        toolBar.setPreferredSize(new Dimension(950, 50));
         toolBar.add(erase);
         toolBar.add(draw);
         toolBar.add(colorButt);
