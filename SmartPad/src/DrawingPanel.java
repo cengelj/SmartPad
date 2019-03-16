@@ -15,9 +15,10 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private int action;
     private JBColor color;
     private Ellipse2D mouseCursor;
-    public DrawingPanel(int height, int width) {
+
+    public DrawingPanel(int width, int height) {
         mouseCursor = null;
-        this.setPreferredSize(new Dimension(height, width));
+        this.setPreferredSize(new Dimension(width, height));
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
         color = JBColor.BLACK;
@@ -32,17 +33,22 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         draw.addActionListener(tog);
         buttons.add(erase);
         buttons.add(draw);
+        JButton connect = new JButton("Connect");
+        connect.addActionListener(new ButtonListener(connect));
+        buttons.add(connect);
         toolBar.setPreferredSize(new Dimension(500, 50));
         toolBar.add(erase);
         toolBar.add(draw);
+        toolBar.add(connect);
         this.add(toolBar);
         action = 1;
-        t = new Timer(5, new ClockListener(this));
+        t = new Timer(2, new ClockListener(this));
         t.start();
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(toolBar.contains(e.getPoint()))return;
         draw(e.getPoint(), 5);
         System.out.println("Mouse clicked at:\t" + e.getPoint());
     }
@@ -79,6 +85,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseDragged(MouseEvent e) {
+        if(toolBar.contains(e.getPoint()))return;
         System.out.println("Mouse dragged at:\t" + e.getPoint());
         if(action == 0) {
             Graphics2D g2 = ((Graphics2D) getGraphics());
@@ -109,7 +116,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         private int action;
         private JButton buttonOne;
         private JButton buttonTwo;
-        public ToggleListener(JButton buttonOne, JButton buttonTwo){
+        protected ToggleListener(JButton buttonOne, JButton buttonTwo){
             buttonOne.addActionListener(this);
             buttonTwo.addActionListener(this);
             this.buttonOne = buttonOne;
@@ -119,17 +126,38 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         public void actionPerformed(ActionEvent e) {
             if(((JButton)e.getSource()).getName().equals("e")){
                 action = 0;
-                buttonOne.setBackground(JBColor.WHITE);
-                buttonTwo.setBackground(JBColor.LIGHT_GRAY);
+                buttonOne.setBackground(JBColor.LIGHT_GRAY);
+                buttonTwo.setBackground(JBColor.WHITE);
             }
             else{
                 action = 1;
-                buttonOne.setBackground(JBColor.LIGHT_GRAY);
-                buttonTwo.setBackground(JBColor.WHITE);
+                buttonOne.setBackground(JBColor.WHITE);
+                buttonTwo.setBackground(JBColor.LIGHT_GRAY);
+
             }
         }
         public int getAction(){
             return action;
+        }
+    }
+    class ButtonListener implements ActionListener{
+        private JButton button;
+        boolean active;
+        public ButtonListener(JButton button){
+            this.button = button;
+            active = false;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            if(!active){
+                // CREATE THE CONNECTION
+                System.out.println("Connected");
+            }
+            else{
+                // DESTROY THE CONNECTION
+                System.out.println("Disconnected");
+            }
+            active = !active;
         }
     }
 }

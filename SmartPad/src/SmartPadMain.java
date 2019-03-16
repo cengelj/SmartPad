@@ -6,7 +6,7 @@ public class SmartPadMain extends JFrame {
         SmartPadMain window = new SmartPadMain();
         window.setPreferredSize(new Dimension(500, 500));
         window.setTitle("SmartPad, be smart - don't do drugs kids");
-        window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         DrawingPanel p = new DrawingPanel(500, 500);
         window.setContentPane(p);
