@@ -1,5 +1,4 @@
 import com.intellij.ui.JBColor;
-import javafx.scene.shape.Circle;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,10 +34,15 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         buttons.add(draw);
         JButton connect = new JButton("Connect");
         connect.addActionListener(new ButtonListener(connect));
+        JButton colorButt = new JButton("Color");
+        colorButt.addActionListener(new ColorListener(colorButt));
+        colorButt.setBackground(JBColor.BLACK);
+        buttons.add(colorButt);
         buttons.add(connect);
         toolBar.setPreferredSize(new Dimension(500, 50));
         toolBar.add(erase);
         toolBar.add(draw);
+        toolBar.add(colorButt);
         toolBar.add(connect);
         this.add(toolBar);
         action = 1;
@@ -81,6 +85,8 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     public void clock() {
         action = ((ToggleListener)buttons.get(0).getActionListeners()[0]).action;
+        Color x = buttons.get(2).getBackground();
+        color = (JBColor)x;
     }
 
     @Override
@@ -117,8 +123,6 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         private JButton buttonOne;
         private JButton buttonTwo;
         protected ToggleListener(JButton buttonOne, JButton buttonTwo){
-            buttonOne.addActionListener(this);
-            buttonTwo.addActionListener(this);
             this.buttonOne = buttonOne;
             this.buttonTwo = buttonTwo;
             action = 1;
@@ -158,6 +162,39 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
                 System.out.println("Disconnected");
             }
             active = !active;
+        }
+    }
+    class ColorListener implements ActionListener{
+        private JButton button;
+        public ColorListener(JButton button){
+            this.button = button;
+        }
+        public void actionPerformed(ActionEvent e) {
+            String[] choices = {"red", "orange", "yellow", "green", "blue", "white", "black"};
+            int choice = JOptionPane.showOptionDialog(button.getRootPane(), "Choose a new color", "Color", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, choices, null);
+            switch(choice){
+                case 0:
+                    button.setBackground(JBColor.RED);
+                    break;
+                case 1:
+                    button.setBackground(JBColor.ORANGE);
+                    break;
+                case 2:
+                    button.setBackground(JBColor.YELLOW);
+                    break;
+                case 3:
+                    button.setBackground(JBColor.GREEN);
+                    break;
+                case 4:
+                    button.setBackground(JBColor.BLUE);
+                    break;
+                case 5:
+                    button.setBackground(JBColor.WHITE);
+                    break;
+                case 6:
+                    button.setBackground(JBColor.BLACK);
+                    break;
+            }
         }
     }
 }
