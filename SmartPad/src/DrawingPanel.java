@@ -4,6 +4,7 @@ import javafx.scene.shape.Circle;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener, Clockable {
@@ -12,13 +13,14 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private JToolBar toolBar;
     private ArrayList<JButton> buttons;
     private int action;
-    private Color color;
-    private Circle mouseCursor;
+    private JBColor color;
+    private Ellipse2D mouseCursor;
     public DrawingPanel(int height, int width) {
+        mouseCursor = null;
         this.setPreferredSize(new Dimension(height, width));
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
-        color = Color.BLACK;
+        color = JBColor.BLACK;
         buttons = new ArrayList<>();
         toolBar = new JToolBar();
         JButton erase = new JButton("Erase");
@@ -52,7 +54,13 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        System.out.println("Mouse released at:\t" + e.getPoint());
+        if(action == 0) {
+            Graphics2D g2 = ((Graphics2D) getGraphics());
+            if (mouseCursor != null) {
+                g2.setColor(getBackground());
+                g2.draw(mouseCursor);
+            }
+        }
     }
 
     @Override
@@ -72,15 +80,23 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mouseDragged(MouseEvent e) {
         System.out.println("Mouse dragged at:\t" + e.getPoint());
+        if(action == 0) {
+            Graphics2D g2 = ((Graphics2D) getGraphics());
+            if (mouseCursor != null) {
+                g2.setColor(getBackground());
+                g2.draw(mouseCursor);
+            }
+            g2.setColor(color);
+            mouseCursor = new Ellipse2D.Double(e.getX(), e.getY(), 20, 20);
+            g2.draw(mouseCursor);
+            draw(e.getPoint(), 20);
+        }
         draw(e.getPoint(), 5);
+
     }
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        mouseCursor.setCenterX(e.getPoint().getX());
-        mouseCursor.setCenterY(e.getPoint().getY());
-        mouseCursor.resize(50.0, 50.0);
-        //getGraphics().drawPolygon(mouseCursor);
         // System.out.println("Mouse moved at:\t" + e.getPoint());
     }
     private void draw(Point p, int size){
