@@ -1,6 +1,8 @@
 import com.intellij.ui.JBColor;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
@@ -14,9 +16,12 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     private int action;
     private JBColor color;
     private Ellipse2D mouseCursor;
+    private JSlider slide;
+    private int size;
 
     public DrawingPanel(int width, int height) {
         mouseCursor = null;
+        size = 5;
         this.setPreferredSize(new Dimension(width, height));
         this.addMouseListener(this);
         this.addMouseMotionListener(this);
@@ -39,10 +44,16 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         colorButt.setBackground(JBColor.BLACK);
         buttons.add(colorButt);
         buttons.add(connect);
+        slide = new JSlider();
+        slide.setMinimum(5);
+        slide.setMaximum(100);
+        slide.setValue(5);
+        slide.addChangeListener(new SlideListener());
         toolBar.setPreferredSize(new Dimension(500, 50));
         toolBar.add(erase);
         toolBar.add(draw);
         toolBar.add(colorButt);
+        toolBar.add(slide);
         toolBar.add(connect);
         this.add(toolBar);
         action = 1;
@@ -53,7 +64,7 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
     @Override
     public void mouseClicked(MouseEvent e) {
         if(toolBar.contains(e.getPoint()))return;
-        draw(e.getPoint(), 5);
+        draw(e.getPoint(), size);
         System.out.println("Mouse clicked at:\t" + e.getPoint());
     }
 
@@ -87,6 +98,8 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
         action = ((ToggleListener)buttons.get(0).getActionListeners()[0]).action;
         Color x = buttons.get(2).getBackground();
         color = (JBColor)x;
+        size = slide.getValue();
+        //size = ((SlideListener)slide.getChangeListeners()[0]).getValue();
     }
 
     @Override
@@ -99,12 +112,12 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
                 g2.setColor(getBackground());
                 g2.draw(mouseCursor);
             }
-            g2.setColor(color);
-            mouseCursor = new Ellipse2D.Double(e.getX(), e.getY(), 20, 20);
+            g2.setColor(JBColor.BLACK);
+            mouseCursor = new Ellipse2D.Double(e.getX(), e.getY(), size, size);
             g2.draw(mouseCursor);
-            draw(e.getPoint(), 20);
+            draw(e.getPoint(), size);
         }
-        draw(e.getPoint(), 5);
+        draw(e.getPoint(), size);
 
     }
 
@@ -196,5 +209,14 @@ public class DrawingPanel extends JPanel implements MouseListener, MouseMotionLi
                     break;
             }
         }
+    }
+    class SlideListener implements ChangeListener{
+            private int value;
+            public void stateChanged(ChangeEvent e) {
+                value = ((JSlider)e.getSource()).getValue();
+            }
+            public int getValue(){
+                return value;
+            }
     }
 }
